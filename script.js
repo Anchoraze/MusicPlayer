@@ -1,4 +1,4 @@
-console.log('Lets Write JS');
+console.log("Lets Write JS");
 
 let currentSong = new Audio();
 let songs = [];
@@ -30,9 +30,9 @@ async function loadSongs(folder) {
         console.log('FOUND SONGS:', songs);
 
         currentIndex = 0;
-
         updatePlaylistUI();
-        if(songs.length > 0) playMusic(songs[0]);
+
+        if (songs.length > 0) playMusic(songs[0], true);
 
     } catch (err) {
         console.error("Failed to load songs:", err);
@@ -61,7 +61,6 @@ function updatePlaylistUI() {
         </li>`;
     }
 
-    // Attach click events
     Array.from(songUL.getElementsByTagName("li")).forEach((li, i) => {
         li.addEventListener("click", () => {
             currentIndex = i;
@@ -73,20 +72,33 @@ function updatePlaylistUI() {
 /* ------------------ Play Music ------------------ */
 function playMusic(track, pause=false) {
     if(!track) return;
+
     currentSong.src = `songs/${currFolder}/${encodeURIComponent(track)}`;
 
-    if(!pause) {
+    if (!pause) {
         currentSong.play();
         play.src = "img/pause.svg";
     }
 
     document.querySelector(".songinfo").innerText = getOnlyName(track);
     document.querySelector(".songtime").innerText = "00:00 / 00:00";
+
+    // Highlight current song
+    highlightCurrentSong();
+}
+
+/* ------------------ Highlight Playing Song ------------------ */
+function highlightCurrentSong() {
+    const lis = document.querySelectorAll(".songList li");
+    lis.forEach((li, i) => {
+        if(i === currentIndex) li.classList.add("playing");
+        else li.classList.remove("playing");
+    });
 }
 
 /* ------------------ Animate Circle ------------------ */
 function animateCircle() {
-    if (!currentSong.paused && !isNaN(currentSong.duration)) {
+    if (!currentSong.paused && !isNaN(currentSong.duration) && currentSong.duration > 0) {
         const percent = (currentSong.currentTime / currentSong.duration) * 100;
         document.querySelector(".circle").style.left = percent + "%";
     }
@@ -96,7 +108,7 @@ function animateCircle() {
 /* ------------------ Main ------------------ */
 async function main() {
 
-    // Attach folder cards
+    // Folder cards
     Array.from(document.getElementsByClassName("card")).forEach(card => {
         card.addEventListener("click", async (event) => {
             const folder = event.currentTarget.dataset.folder;
@@ -104,9 +116,9 @@ async function main() {
         });
     });
 
-    // Play / Pause button
+    // Play / Pause
     play.addEventListener("click", () => {
-        if(currentSong.paused) {
+        if (currentSong.paused) {
             currentSong.play();
             play.src = "img/pause.svg";
         } else {
@@ -117,24 +129,17 @@ async function main() {
 
     // Next / Previous
     previous.addEventListener("click", () => {
-        if(currentIndex > 0) {
+        if (currentIndex > 0) {
             currentIndex--;
             playMusic(songs[currentIndex]);
         }
     });
 
     next.addEventListener("click", () => {
-        if(currentIndex < songs.length - 1) {
+        if (currentIndex < songs.length - 1) {
             currentIndex++;
             playMusic(songs[currentIndex]);
         }
-    });
-
-    // Seekbar
-    document.querySelector(".seekbar").addEventListener("click", e => {
-        const percent = (e.offsetX / e.target.getBoundingClientRect().width);
-        currentSong.currentTime = currentSong.duration * percent;
-        document.querySelector(".circle").style.left = (percent*100) + "%";
     });
 
     // Volume
@@ -142,7 +147,14 @@ async function main() {
         currentSong.volume = parseInt(e.target.value)/100;
     });
 
-    // Hamburger / close menu
+    // Seekbar click
+    document.querySelector(".seekbar").addEventListener("click", e => {
+        const percent = e.offsetX / e.target.getBoundingClientRect().width;
+        currentSong.currentTime = currentSong.duration * percent;
+        document.querySelector(".circle").style.left = (percent*100) + "%";
+    });
+
+    // Hamburger menu
     document.querySelector(".hamburger").addEventListener("click", ()=> {
         document.querySelector(".left").style.left = "0";
     });
@@ -150,21 +162,33 @@ async function main() {
         document.querySelector(".left").style.left = "-200%";
     });
 
-
+    // Time update
     currentSong.addEventListener("timeupdate", () => {
-    const current = formatTime(currentSong.currentTime);
-    const duration = formatTime(currentSong.duration);
-    document.querySelector(".songtime").innerText = `${current} / ${duration}`;
+        const current = formatTime(currentSong.currentTime);
+        const duration = formatTime(currentSong.duration);
+        document.querySelector(".songtime").innerText = `${current} / ${duration}`;
 
-    // update the circle on seekbar
-    if (!isNaN(currentSong.duration) && currentSong.duration > 0) {
-        const percent = (currentSong.currentTime / currentSong.duration) * 100;
-        document.querySelector(".circle").style.left = percent + "%";
-    }
-});
+        if (!isNaN(currentSong.duration) && currentSong.duration > 0) {
+            const percent = (currentSong.currentTime / currentSong.duration) * 100;
+            document.querySelector(".circle").style.left = percent + "%";
+        }
+    });
 
+    // loadedmetadata to show total duration immediately
+    currentSong.addEventListener("loadedmetadata", () => {
+        document.querySelector(".songtime").innerText = `00:00 / ${formatTime(currentSong.duration)}`;
+    });
+
+    // Auto-play next song when current ends
+    currentSong.addEventListener("ended", () => {
+        if (currentIndex < songs.length - 1) {
+            currentIndex++;
+            playMusic(songs[currentIndex]);
+        }
+    });
 
     requestAnimationFrame(animateCircle);
 }
 
 main();
+
