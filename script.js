@@ -150,6 +150,20 @@ async function main() {
         document.querySelector(".left").style.left = "-200%";
     });
 
+
+    currentSong.addEventListener("timeupdate", () => {
+    const current = formatTime(currentSong.currentTime);
+    const duration = formatTime(currentSong.duration);
+    document.querySelector(".songtime").innerText = `${current} / ${duration}`;
+
+    // update the circle on seekbar
+    if (!isNaN(currentSong.duration) && currentSong.duration > 0) {
+        const percent = (currentSong.currentTime / currentSong.duration) * 100;
+        document.querySelector(".circle").style.left = percent + "%";
+    }
+});
+
+
     requestAnimationFrame(animateCircle);
 }
 
