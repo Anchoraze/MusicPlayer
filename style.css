@@ -98,10 +98,18 @@ body{
 padding-top: 10px;
 
 }
-.card img{
+.card p {
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: #ddd;
+    font-style: oblique;
+}
+.card img {
     width: 100%;
-    object-fit: contain;
+    height: 180px; /* set a consistent image height */
+    object-fit: cover; /* cover looks nicer than contain */
     border-radius: 7px;
+    padding: 0;
 }
 .card-container{
     margin: 30px;
@@ -112,19 +120,25 @@ padding-top: 10px;
     overflow-y: scroll;
     max-height: 70vh;
 }
-.card{
+.card {
     position: relative;
     width: 200px;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 10px;
     background-color: #655757;
-    transition: all 1.7s;
-
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* soft shadow */
+    height: 300px; /* added height */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 .card:hover{
     background-color: rgb(86, 78, 78);
     cursor: pointer;
     --a:1;
+    transform: translateY(-5px); /* subtle lift on hover */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* stronger shadow on hover */
 }
 .play{
     position: absolute;
