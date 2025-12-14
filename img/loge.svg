@@ -1,0 +1,46 @@
+<svg
+  width="600"
+  height="160"
+  viewBox="0 0 600 160"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <!-- Gradient -->
+    <linearGradient id="anchorGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+
+    <!-- Subtle shadow -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Brand Name -->
+  <text
+    x="50%"
+    y="85"
+    text-anchor="middle"
+    font-size="64"
+    font-weight="800"
+    letter-spacing="6"
+    fill="url(#anchorGradient)"
+    filter="url(#shadow)"
+    style="font-family: 'Poppins', 'Montserrat', Arial, sans-serif;"
+  >
+    ANCHORAZE
+  </text>
+
+  <!-- Anchor-style underline -->
+  <path
+    d="M150 110 H450
+       M300 110 V135
+       M280 135 Q300 150 320 135"
+    fill="none"
+    stroke="#0ea5e9"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
